@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.fajar.verifikasiimb.VerificationActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/app_bar"></include>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_horizontal_margin">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/verification_photo"
+                    android:textSize="@dimen/text_size_large" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:background="@drawable/white_text_layout"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <ImageView
+                        android:id="@+id/photo_first"
+                        android:layout_width="@dimen/photobuttonsize"
+                        android:layout_height="@dimen/photobuttonsize"
+                        android:clickable="true"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:src="@drawable/ic_add_a_photo_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/photo_second"
+                        android:layout_width="@dimen/photobuttonsize"
+                        android:layout_height="@dimen/photobuttonsize"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:clickable="true"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:src="@drawable/ic_add_a_photo_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/photo_third"
+                        android:layout_width="@dimen/photobuttonsize"
+                        android:layout_height="@dimen/photobuttonsize"
+                        android:clickable="true"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:src="@drawable/ic_add_a_photo_black_24dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="@string/status_bangunan"
+                    android:textSize="@dimen/text_size_large" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_text_layout"
+                    android:padding="@dimen/activity_vertical_margin">
+
+                    <Spinner
+                        android:id="@+id/status_bangunan_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="@string/input_jalan"
+                    android:textSize="@dimen/text_size_large" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_text_layout"
+                    android:padding="@dimen/activity_vertical_margin">
+
+                    <EditText
+                        android:id="@+id/et_nama_jalan_ver"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:hint="@string/hint_alamat"
+                        android:textSize="@dimen/text_size_regular" />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="@string/input_nomor"
+                    android:textSize="@dimen/text_size_large" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_text_layout"
+                    android:padding="@dimen/activity_vertical_margin">
+
+                    <EditText
+                        android:id="@+id/et_nomor_rumah_ver"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:hint="@string/hint_nomor_rumah"
+                        android:inputType="number"
+                        android:textSize="@dimen/text_size_regular" />
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="@string/input_berita_acara"
+                    android:textSize="@dimen/text_size_large" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/white_text_layout"
+                    android:padding="@dimen/activity_vertical_margin">
+
+                    <EditText
+                        android:id="@+id/et_keterangan_ver"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:hint="@string/hint_berita_acara"
+                        android:textSize="@dimen/text_size_regular" />
+                </RelativeLayout>
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_upload_verifikasi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:text="@string/upload_data" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

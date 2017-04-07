@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Verifikasi IMB</string>
+    <string name="login">Halaman Login</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_name">Fullname</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_register">REGISTER</string>
+    <string name="btn_link_to_register">Not a member? Sign up now.</string>
+    <string name="btn_link_to_login">Already registred! Login Me.</string>
+    <string name="welcome">Welcome</string>
+    <string name="btn_logout">LOGOUT</string>
+    <string name="name">Fullname</string>
+    <string name="loading">Loading Data ...</string>
+    <string name="bangunan_id">id</string>
+    <string name="bangunan_fid">fid</string>
+    <string name="bangunan_nib">nib</string>
+    <string name="bangunan_no_sk">nomor sk</string>
+    <string name="bangunan_no_persil">nomor persil</string>
+    <string name="bangunan_nama_site">nama site</string>
+    <string name="bangunan_pemilik">pemilik</string>
+    <string name="bangunan_wilayah">wilayah</string>
+    <string name="bangunan_alamat">alamat</string>
+    <string name="bangunan_ket_imb">keterangan imb</string>
+    <string name="bangunan_landuse">land use</string>
+    <string name="bangunan_nama_jalan">nama jalan</string>
+    <string name="bangunan_gang">gang</string>
+    <string name="bangunan_nomor">nomor</string>
+    <string name="bangunan_kelurahan">kelurahan</string>
+    <string name="verification_photo">Tambahkan Foto Bangunan</string>
+    <string name="input_alamat">Alamat</string>
+    <string name="hint_alamat">tuliskan nama jalan</string>
+    <string name="input_berita_acara">Berita Acara</string>
+    <string name="hint_berita_acara">tuliskan apa yang ingin anda laporkan</string>
+    <string name="upload_data">Upload Data Verifikasi</string>
+    <string name="bangunan_kecamatan">kecamatan</string>
+    <string name="input_jalan">Jalan</string>
+    <string name="input_nomor">Nomor</string>
+    <string name="hint_nomor_rumah">tuliskan nomor rumah</string>
+    <string name="status_bangunan">Status Bangunan</string>
+</resources>
