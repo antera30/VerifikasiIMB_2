@@ -1,22 +1,31 @@
 package com.example.fajar.verifikasiimb;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.fajar.verifikasiimb.model.Bangunan;
-import com.example.fajar.verifikasiimb.model.BangunanResponse;
-import com.example.fajar.verifikasiimb.model.SelectedBangunanList;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class DetailBangunanActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -24,12 +33,15 @@ public class DetailBangunanActivity extends AppCompatActivity {
     int position, fid;
     Button btn_verification;
     private List<Bangunan> mValues;
+    String TAG = DetailBangunanActivity.class.getSimpleName();
 
     TextView tv_fid, tv_nib, tv_no_sk, tv_no_persil, tv_nama_site, tv_pemilik, tv_wilayah,
-    tv_alamat, tv_ket_imb, tv_landuse, tv_nama_jalan, tv_gang, tv_nomor, tv_kelurahan, tv_kecamatan;
+            tv_alamat, tv_ket_imb, tv_landuse, tv_nama_jalan, tv_gang, tv_nomor, tv_kelurahan, tv_kecamatan;
 
-
-
+    ImageView gambar_bangunan;
+    private static final int MAX_WIDTH = 400;
+    private static final int MAX_HEIGHT = 300;
+    private Bitmap theBitmap = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +72,9 @@ public class DetailBangunanActivity extends AppCompatActivity {
         String nomor = extras.getString("nomor");
         Double latitude = extras.getDouble("latitide");
         Double longitude = extras.getDouble("longitude");
+        final String encoded_image = extras.getString("encoded_image");
 
-
-        Toast.makeText(this, ""+fid,Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "" + fid, Toast.LENGTH_LONG).show();
 
         btn_verification = (Button) findViewById(R.id.btn_verification);
         btn_verification.setOnClickListener(new View.OnClickListener() {
@@ -105,9 +117,46 @@ public class DetailBangunanActivity extends AppCompatActivity {
         tv_kecamatan = (TextView) findViewById(R.id.bangunan_kecamatan);
         tv_kecamatan.setText(String.valueOf(kecamatan));
 
+        gambar_bangunan = (ImageView) findViewById(R.id.imagerumah);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Looper.prepare();
+                try {
+                    theBitmap = Glide.
+                            with(DetailBangunanActivity.this).
+                            load(encoded_image).
+                            asBitmap().
+                            into(-1,-1).
+                            get();
+                } catch (final ExecutionException e) {
+                    Log.e(TAG, e.getMessage());
+                } catch (final InterruptedException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void dummy) {
+                if (null != theBitmap) {
+                    // The full bitmap should be available here
+                    gambar_bangunan.setImageBitmap(theBitmap);
+                    Log.d(TAG, "Image loaded");
+                };
+            }
+        }.execute();
+
+        gambar_bangunan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        //byte[] decodedString = Base64.decode(encoded_image, Base64.DEFAULT);
 
 
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -16,8 +16,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.fajar.verifikasiimb.R;
+import com.example.fajar.verifikasiimb.model.Bangunan;
+import com.example.fajar.verifikasiimb.model.BangunanResponse;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,6 +31,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -41,7 +48,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     View rootView;
     private LocationManager locationManager;
     ImageButton btn_verification;
-
+    public static List<Bangunan> listBangunan = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,15 +57,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
-
-//        btn_verification = (ImageButton) getView().findViewById(R.id.insert_verification);
-//        btn_verification.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
+        btn_verification = (ImageButton) rootView.findViewById(R.id.insert_verification);
+        btn_verification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 //                Intent intent = new Intent(getActivity(), VerificationActivity.class);
 //                startActivity(intent);
-//            }
-//        });
+                Toast.makeText(getActivity().getApplicationContext(), listBangunan.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -68,6 +76,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         mMapView.getMapAsync(this);
         return rootView;
     }
+
+    public void addMarker(LatLng latLng, GoogleMap googleMap, String title) {
+        googleMap.addMarker(new MarkerOptions().position(latLng).title(title));
+    }
+
 
     @Override
     public void onResume() {
@@ -110,6 +123,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
+        List<Bangunan> bangunanList = getListBangunan();
+        if (bangunanList.size() != 0) {
+            for (int i = 0; i < bangunanList.size(); i++) {
+                LatLng loc = new LatLng(bangunanList.get(i).getLatitude(), bangunanList.get(i).getLongitude());
+                int pemilik = bangunanList.get(i).getIdPemilik();
+                addMarker(loc, mMap, "Id Pemilik : " + pemilik);
+            }
+        }
+
         googleMap.setMyLocationEnabled(true);
         if (mMapView != null &&
                 mMapView.findViewById(Integer.parseInt("1")) != null) {
@@ -125,6 +148,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         }
 
+    }
+
+    public List<Bangunan> getListBangunan() {
+        return listBangunan;
+    }
+
+    public void setListBangunan(List<Bangunan> bangunan) {
+        listBangunan = bangunan;
     }
 
     @Override

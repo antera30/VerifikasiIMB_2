@@ -245,21 +245,21 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK && photo != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             //Log.i("ID", String.valueOf(BUTTON_ID));
             fileUri_1 = getOutputMediaFileUri(photo);
             encodedImage_1 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
             iv_photo_1.setImageURI(fileUri_1);
         } else if (requestCode == 2 && resultCode == Activity.RESULT_OK && photo != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             //Log.i("ID", String.valueOf(BUTTON_ID));
             fileUri_2 = getOutputMediaFileUri(photo);
             encodedImage_2 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
             iv_photo_2.setImageURI(fileUri_2);
         } else if (requestCode == 3 && resultCode == Activity.RESULT_OK && photo != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             //.i("ID", String.valueOf(BUTTON_ID));
             fileUri_3 = getOutputMediaFileUri(photo);
             encodedImage_3 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);

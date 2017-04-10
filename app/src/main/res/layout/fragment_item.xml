@@ -17,10 +17,11 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/gambar_bangunan"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="250dp"
             android:src="@drawable/ic_home_black_24dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitXY"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

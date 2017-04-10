@@ -2,12 +2,15 @@ package com.example.fajar.verifikasiimb.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +21,16 @@ import com.example.fajar.verifikasiimb.DetailBangunanActivity;
 import com.example.fajar.verifikasiimb.R;
 import com.example.fajar.verifikasiimb.adapter.DividerItemDecoration;
 import com.example.fajar.verifikasiimb.adapter.MyItemRecyclerViewAdapter;
+import com.example.fajar.verifikasiimb.function.GPSTracker;
 import com.example.fajar.verifikasiimb.listener.RecyclerItemClickListener;
 import com.example.fajar.verifikasiimb.model.Bangunan;
 import com.example.fajar.verifikasiimb.model.BangunanResponse;
 import com.example.fajar.verifikasiimb.rest.ApiClient;
 import com.example.fajar.verifikasiimb.rest.ApiInterface;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +52,9 @@ public class ItemFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
+
+    private MapsFragment mapsFragment = new MapsFragment();
+
     public ItemFragment() {
     }
 
@@ -75,8 +84,9 @@ public class ItemFragment extends Fragment {
             @Override
             public void onResponse(Call<BangunanResponse> call, retrofit2.Response<BangunanResponse> response) {
                 int statusCode = response.code();
-                List<Bangunan> bangunan = response.body().getBangunan();
-                Log.i("tugascontent", response.body().getBangunan().toString());
+                List<Bangunan> bangunan = response.body().getBangunan(getActivity().getApplicationContext());
+                mapsFragment.setListBangunan(bangunan);
+                //Log.i("tugascontent", response.body().getBangunan().toString());
                 Log.i("tugascontent", response.body().toString());
                 Log.i("CodeTugas", String.valueOf(statusCode));
 //                Toast.makeText(getContext(),""+response, Toast.LENGTH_SHORT).show();
@@ -91,6 +101,8 @@ public class ItemFragment extends Fragment {
         });
 
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -113,7 +125,6 @@ public class ItemFragment extends Fragment {
 
             recyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(bangunan, mListener, context));
-
             recyclerView.addOnItemTouchListener(
                     new RecyclerItemClickListener(context, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
                         @Override public void onItemClick(View view, int position) {
@@ -139,6 +150,7 @@ public class ItemFragment extends Fragment {
                             extras.putString("nomor", bg.getNomor());
                             extras.putDouble("latitude", bg.getLatitude());
                             extras.putDouble("longitude", bg.getLongitude());
+                            extras.putString("encoded_image", bg.getGambarBangunan());
 
                             i.putExtras(extras);
                             startActivity(i);

@@ -1,9 +1,13 @@
 package com.example.fajar.verifikasiimb.model;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.android.volley.toolbox.StringRequest;
+import com.example.fajar.verifikasiimb.function.DistanceMeasure;
+import com.example.fajar.verifikasiimb.function.GPSTracker;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -46,6 +50,9 @@ public class Bangunan{
     @SerializedName("id_landuse")
     @Expose
     private Integer idLanduse;
+    @SerializedName("gambar_bangunan")
+    @Expose
+    private String gambarBangunan;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -166,6 +173,14 @@ public class Bangunan{
         return createdAt;
     }
 
+    public String getGambarBangunan() {
+        return gambarBangunan;
+    }
+
+    public void setGambarBangunan(String gambarBangunan) {
+        this.gambarBangunan = gambarBangunan;
+    }
+
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
@@ -234,6 +249,20 @@ public class Bangunan{
         this.longitude = longitude;
     }
 
+
+    private Double distance;
+
+    public void setDistance(Context mContext){
+        GPSTracker gpsTracker = new GPSTracker(mContext);
+        this.distance = DistanceMeasure.getDistance(getLatitude(), getLongitude(), gpsTracker.getLatitude(),gpsTracker.getLongitude());
+    }
+
+    public Double getDistance(){
+        return distance;
+    }
+
+
+
     @Override
     public String toString() {
         return "Bangunan{" +
@@ -248,6 +277,7 @@ public class Bangunan{
                 ", idAlamat=" + idAlamat +
                 ", idKetImb=" + idKetImb +
                 ", idLanduse=" + idLanduse +
+                ", gambarBangunan='" + gambarBangunan + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", updatedAt='" + updatedAt + '\'' +
                 ", namaJalan='" + namaJalan + '\'' +
@@ -259,4 +289,6 @@ public class Bangunan{
                 ", longitude=" + longitude +
                 '}';
     }
+
+
 }
