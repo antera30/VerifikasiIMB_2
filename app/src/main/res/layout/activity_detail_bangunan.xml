@@ -9,8 +9,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/divider">
+        android:layout_height="match_parent">
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -24,15 +23,34 @@
 
                 <include layout="@layout/app_bar"></include>
 
-                <ImageView
-                    android:id="@+id/imagerumah"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:scaleType="fitXY"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerInParent="false"
-                    android:foregroundGravity="center_horizontal"
-                    android:src="@drawable/logo_surabaya" />
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/imagerumah"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerInParent="false"
+                        android:foregroundGravity="center_horizontal"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_home_black_24dp" />
+
+                    <ImageButton
+                        android:id="@+id/btn_single_maps_view"
+                        style="@style/MyCircleButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:elevation="2dp"
+                        android:src="@drawable/ic_place_black_24dp" />
+
+                </RelativeLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -57,7 +75,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_fid"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -85,7 +103,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_nib"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -113,7 +131,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_no_sk"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -141,7 +159,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_no_persil"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -169,7 +187,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_nama_site"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -197,7 +215,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_pemilik"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -225,7 +243,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_wilayah"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -253,7 +271,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_alamat"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -281,7 +299,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_ket_imb"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -309,7 +327,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_landuse"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -337,7 +355,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_nama_jalan"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -365,7 +383,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_gang"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -393,7 +411,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_nomor"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -421,7 +439,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_kelurahan"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>
@@ -449,7 +467,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="@string/bangunan_kecamatan"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/text_size_regular" />
                     </RelativeLayout>
                 </LinearLayout>

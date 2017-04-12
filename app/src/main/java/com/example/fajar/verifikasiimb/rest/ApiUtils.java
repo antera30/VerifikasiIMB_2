@@ -8,8 +8,8 @@ public class ApiUtils {
 
     private ApiUtils() {}
 
-    public static ApiInterface getAPIService() {
+    public static ApiService getAPIService() {
 
-        return ApiClient.getClient().create(ApiInterface.class);
+        return ApiClient.getClient().create(ApiService.class);
     }
 }

@@ -2,15 +2,12 @@ package com.example.fajar.verifikasiimb.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,16 +18,13 @@ import com.example.fajar.verifikasiimb.DetailBangunanActivity;
 import com.example.fajar.verifikasiimb.R;
 import com.example.fajar.verifikasiimb.adapter.DividerItemDecoration;
 import com.example.fajar.verifikasiimb.adapter.MyItemRecyclerViewAdapter;
-import com.example.fajar.verifikasiimb.function.GPSTracker;
 import com.example.fajar.verifikasiimb.listener.RecyclerItemClickListener;
 import com.example.fajar.verifikasiimb.model.Bangunan;
 import com.example.fajar.verifikasiimb.model.BangunanResponse;
 import com.example.fajar.verifikasiimb.rest.ApiClient;
-import com.example.fajar.verifikasiimb.rest.ApiInterface;
+import com.example.fajar.verifikasiimb.rest.ApiService;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,7 +70,7 @@ public class ItemFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
-        ApiInterface apiService = ApiClient.NewClient().create(ApiInterface.class);
+        ApiService apiService = ApiClient.NewClient().create(ApiService.class);
 
         Call<BangunanResponse> call = apiService.Bangunanku();
         call.enqueue(new Callback<BangunanResponse>() {
@@ -101,8 +95,6 @@ public class ItemFragment extends Fragment {
         });
 
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

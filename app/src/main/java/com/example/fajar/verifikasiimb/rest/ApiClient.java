@@ -1,7 +1,5 @@
 package com.example.fajar.verifikasiimb.rest;
 
-import android.graphics.Bitmap;
-
 import com.example.fajar.verifikasiimb.config.AppConfig;
 
 import retrofit2.Retrofit;
@@ -17,7 +15,7 @@ public class ApiClient {
     public static Retrofit getClient() {
         if (retrofit==null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(AppConfig.BASE_URL)
+                    .baseUrl(AppConfig.BASE_API_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
@@ -27,7 +25,7 @@ public class ApiClient {
     public static Retrofit NewClient() {
         if (retrofit==null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(AppConfig.BASE_URL)
+                    .baseUrl(AppConfig.BASE_API_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

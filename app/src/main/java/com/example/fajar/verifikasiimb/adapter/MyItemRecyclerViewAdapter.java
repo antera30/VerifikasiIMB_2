@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fajar.verifikasiimb.config.AppConfig;
 import com.example.fajar.verifikasiimb.fragment.ItemFragment.OnListFragmentInteractionListener;
 import com.example.fajar.verifikasiimb.R;
 import com.example.fajar.verifikasiimb.function.GPSTracker;
@@ -19,6 +20,7 @@ import com.example.fajar.verifikasiimb.model.Bangunan;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
@@ -59,21 +61,23 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             latitude2 = mValues.get(position).getLatitude();
             longitude2 = mValues.get(position).getLongitude();
             int distance = (int) distFrom(latitude1, longitude1, latitude2, longitude2);
-            holder.mDistanceView.setText(String.valueOf(distance)+" meter");
+            holder.mDistanceView.setText(decimalFormatter(distance)+" meter");
         }else{
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
         }
-        if (mValues.get(position).getGambarBangunan() != null) {
-            encodedImage = mValues.get(position).getGambarBangunan();
+
+        encodedImage = ""+AppConfig.BASE_URL+mValues.get(position).getGambarBangunan();
+        if (encodedImage != null) {
             Picasso.with(mContext)
                     .load(encodedImage)
                     .resize(MAX_WIDTH, MAX_HEIGHT)
                     .centerCrop()
                     .into(holder.mGambarBangunan);
         }
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +88,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
                 }
             }
         });
+    }
+
+    public String decimalFormatter(double number){
+        DecimalFormat decimalFormat = new DecimalFormat("#,###,###");
+        String formattedNumber = decimalFormat.format(number);
+        return formattedNumber;
     }
 
     @Override
@@ -112,11 +122,6 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }
-    }
-
-    public static Bitmap decodeFromBase64(String image) throws IOException {
-        byte[] decodedByteArray = Base64.decode(image, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
     }
 
     public static double distFrom(double lat1, double lng1, double lat2, double lng2) {

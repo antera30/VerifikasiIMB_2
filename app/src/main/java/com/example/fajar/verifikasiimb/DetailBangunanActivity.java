@@ -13,11 +13,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.fajar.verifikasiimb.config.AppConfig;
 import com.example.fajar.verifikasiimb.model.Bangunan;
 import com.squareup.picasso.Picasso;
 
@@ -32,6 +34,7 @@ public class DetailBangunanActivity extends AppCompatActivity {
     Intent intent;
     int position, fid;
     Button btn_verification;
+    ImageButton btn_single_maps_view;
     private List<Bangunan> mValues;
     String TAG = DetailBangunanActivity.class.getSimpleName();
 
@@ -70,8 +73,8 @@ public class DetailBangunanActivity extends AppCompatActivity {
         String namajalan = extras.getString("namajalan");
         String gang = extras.getString("gang");
         String nomor = extras.getString("nomor");
-        Double latitude = extras.getDouble("latitide");
-        Double longitude = extras.getDouble("longitude");
+        final double latitude = extras.getDouble("latitude");
+        final double longitude = extras.getDouble("longitude");
         final String encoded_image = extras.getString("encoded_image");
 
         Toast.makeText(this, "" + fid, Toast.LENGTH_LONG).show();
@@ -123,9 +126,10 @@ public class DetailBangunanActivity extends AppCompatActivity {
             protected Void doInBackground(Void... params) {
                 Looper.prepare();
                 try {
+                    String encodedImage = ""+ AppConfig.BASE_URL+encoded_image;
                     theBitmap = Glide.
                             with(DetailBangunanActivity.this).
-                            load(encoded_image).
+                            load(encodedImage).
                             asBitmap().
                             into(-1,-1).
                             get();
@@ -154,6 +158,20 @@ public class DetailBangunanActivity extends AppCompatActivity {
         });
         //byte[] decodedString = Base64.decode(encoded_image, Base64.DEFAULT);
 
+
+        //button that inflate to single maps view activity
+        btn_single_maps_view = (ImageButton) findViewById(R.id.btn_single_maps_view);
+        btn_single_maps_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), SingleBangunanMapsView.class);
+                Bundle extras = new Bundle();
+                extras.putDouble("latitude",latitude);
+                extras.putDouble("longitude", longitude);
+                i.putExtras(extras);
+                startActivity(i);
+            }
+        });
 
     }
 

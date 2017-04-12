@@ -20,8 +20,8 @@
             android:id="@+id/gambar_bangunan"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:src="@drawable/ic_home_black_24dp"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_home_black_24dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -31,16 +31,19 @@
                 android:id="@+id/pemilik"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:text="bambang"
-                android:layout_alignParentLeft="true"/>
+                android:textSize="@dimen/text_size_large" />
 
             <TextView
                 android:id="@+id/jarak"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="250 m"
                 android:layout_alignParentRight="true"
-                android:textColor="@color/colorAccent" />
+                android:text="250 m"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold" />
         </RelativeLayout>
 
         <TextView
