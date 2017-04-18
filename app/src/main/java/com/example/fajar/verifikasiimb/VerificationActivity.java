@@ -82,6 +82,7 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
     public static String realPath, sresultnameimage;
     public Context mContext;
     public static String ImageCompressedPath;
+    ArrayList<String> capturedImagePath = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,22 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
             }
         });
 
+        iv_photo_2 = (ImageView) findViewById(R.id.photo_second);
+        iv_photo_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                captureImage();
+            }
+        });
+
+        iv_photo_3 = (ImageView) findViewById(R.id.photo_third);
+        iv_photo_3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                captureImage();
+            }
+        });
+
         et_nomor_rumah = (EditText) findViewById(R.id.et_nomor_rumah_ver);
         et_nama_jalan = (EditText) findViewById(R.id.et_nama_jalan_ver);
         et_keterangan = (EditText) findViewById(R.id.et_keterangan_ver);
@@ -128,8 +145,8 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
 
                 if (!TextUtils.isEmpty(nama_jalan) && !TextUtils.isEmpty(keterangan)
                         && !TextUtils.isEmpty(String.valueOf(nomor_rumah))) {
-                    Toast.makeText(mContext, "position : "+ String.valueOf(status)+" nomor : "+nomor_rumah+
-                    " nama jalan : "+nama_jalan+ " keterangan : "+keterangan, Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, "position : " + String.valueOf(status) + " nomor : " + nomor_rumah +
+                            " nama jalan : " + nama_jalan + " keterangan : " + keterangan, Toast.LENGTH_LONG).show();
                     uploadFile(ImageCompressedPath, String.valueOf(status), nomor_rumah, nama_jalan, keterangan);
                 }
 
@@ -559,8 +576,15 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 //            progressDialogcompres.dismiss();
+            capturedImagePath.add(result);
             ImageCompressedPath = result;
-            Picasso.with(getApplicationContext()).load("file://" + result).into(iv_photo_1);
+            if (capturedImagePath.size() == 1) {
+                Picasso.with(getApplicationContext()).load("file://" + capturedImagePath.get(0)).into(iv_photo_1);
+            } else if (capturedImagePath.size() == 2) {
+                Picasso.with(getApplicationContext()).load("file://" + capturedImagePath.get(1)).into(iv_photo_2);
+            } else if (capturedImagePath.size() == 3) {
+                Picasso.with(getApplicationContext()).load("file://" + capturedImagePath.get(2)).into(iv_photo_3);
+            }
 
         }
 
