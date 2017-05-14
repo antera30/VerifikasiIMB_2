@@ -25,7 +25,7 @@ public interface ApiService {
     @GET("getBangunan.php")
     Call<BangunanResponse> Bangunanku();
 
-//    @POST("postLaporan.php")
+    //    @POST("postLaporan.php")
 //    @FormUrlEncoded
 //    Call<VerificationRespond> postVerifikasi(@Field("kondisi_bangunan") int kondisi_bangunan,
 //                                             @Field("encoded_image") String encoded_image,
@@ -34,11 +34,66 @@ public interface ApiService {
 //                                             @Field("keterangan") String keterangan);
 //    @FormUrlEncoded
     @Multipart
-    @POST("postLaporan.php")
+    @POST("postver.php")
     Call<ResponseBody> postImage(@Part MultipartBody.Part image,
-                                 @Part("kondisi_bangunan")RequestBody  kondisi_bangunan,
-                                 @Part("no_rumah")RequestBody  no_rumah,
-                                 @Part("nama_jalan")RequestBody  nama_jalan,
-                                 @Part("keterangan")RequestBody  keterangan);
+                                 @Part("kondisi_bangunan") RequestBody kondisi_bangunan,
+                                 @Part("no_rumah") RequestBody no_rumah,
+                                 @Part("nama_jalan") RequestBody nama_jalan,
+                                 @Part("keterangan") RequestBody keterangan,
+                                 @Part("id_bangunan") RequestBody id_bangunan);
+
+    @Multipart
+    @POST("postver.php")
+    Call<ResponseBody> postImage(@Part MultipartBody.Part image1, @Part MultipartBody.Part image2,
+                                 @Part("kondisi_bangunan") RequestBody kondisi_bangunan,
+                                 @Part("no_rumah") RequestBody no_rumah,
+                                 @Part("nama_jalan") RequestBody nama_jalan,
+                                 @Part("keterangan") RequestBody keterangan,
+                                 @Part("id_bangunan") RequestBody id_bangunan);
+
+    @Multipart
+    @POST("postver.php")
+    Call<ResponseBody> postImage(@Part MultipartBody.Part image1, @Part MultipartBody.Part image2, @Part MultipartBody.Part image3,
+                                 @Part("kondisi_bangunan") RequestBody kondisi_bangunan,
+                                 @Part("no_rumah") RequestBody no_rumah,
+                                 @Part("nama_jalan") RequestBody nama_jalan,
+                                 @Part("keterangan") RequestBody keterangan,
+                                 @Part("id_bangunan") RequestBody id_bangunan);
+
+    @Multipart
+    @POST("postver.php")
+    Call<ResponseBody> postImage(@Part MultipartBody.Part image,
+                                 @Part("kondisi_bangunan") RequestBody kondisi_bangunan,
+                                 @Part("no_rumah") RequestBody no_rumah,
+                                 @Part("nama_jalan") RequestBody nama_jalan,
+                                 @Part("keterangan") RequestBody keterangan,
+                                 @Part("latitude") RequestBody latitude,
+                                 @Part("longitude") RequestBody longitude);
+
+    @Multipart
+    @POST("postver.php")
+    Call<ResponseBody> postImage(@Part MultipartBody.Part image1, @Part MultipartBody.Part image2,
+                                 @Part("kondisi_bangunan") RequestBody kondisi_bangunan,
+                                 @Part("no_rumah") RequestBody no_rumah,
+                                 @Part("nama_jalan") RequestBody nama_jalan,
+                                 @Part("keterangan") RequestBody keterangan,
+                                 @Part("latitude") RequestBody latitude,
+                                 @Part("longitude") RequestBody longitude);
+
+    @Multipart
+    @POST("postver.php")
+    Call<ResponseBody> postImage(@Part MultipartBody.Part image1, @Part MultipartBody.Part image2, @Part MultipartBody.Part image3,
+                                 @Part("kondisi_bangunan") RequestBody kondisi_bangunan,
+                                 @Part("no_rumah") RequestBody no_rumah,
+                                 @Part("nama_jalan") RequestBody nama_jalan,
+                                 @Part("keterangan") RequestBody keterangan,
+                                 @Part("latitude") RequestBody latitude,
+                                 @Part("longitude") RequestBody longitude);
+
+    @Multipart
+    @POST("postlaporansesuai.php")
+    Call<ResponseBody> postlaporansesuai(@Part("id_ket_imb") RequestBody id_ket_bangunan,
+                                         @Part("id_bangunan") RequestBody id_bangunan,
+                                         @Part("id_petugas") RequestBody id_petugas);
 
 }

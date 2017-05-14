@@ -42,4 +42,10 @@
     <string name="input_nomor">Nomor</string>
     <string name="hint_nomor_rumah">tuliskan nomor rumah</string>
     <string name="status_bangunan">Status Bangunan</string>
+    <string name="btn_bangunan_sesuai">Sesuai</string>
+    <string name="btn_bangunan_tidak_sesuai">Tidak Sesuai</string>
+    <string name="response_error_upload">Error upload data, please try again</string>
+    <string name="response_success_upload">Success upload data</string>
+    <string name="response_failure">unable to upload data</string>
+    <string name="laporkan_bang">Laporkan Bangunan Ini</string>
 </resources>

@@ -80,6 +80,34 @@ public class Bangunan{
     @SerializedName("longitude")
     @Expose
     private Double longitude;
+    @SerializedName("nama")
+    @Expose
+    private String nama;
+    @SerializedName("no_hp")
+    @Expose
+    private String noHp;
+    @SerializedName("no_ktp")
+    @Expose
+    private Object noKtp;
+    @SerializedName("nama_wilayah")
+    @Expose
+    private String namaWilayah;
+    @SerializedName("id_imb")
+    @Expose
+    private Integer idImb;
+    @SerializedName("ket_imb")
+    @Expose
+    private String ketImb;
+    @SerializedName("tipe_landuse")
+    @Expose
+    private String tipeLanduse;
+    @SerializedName("nama_kecamatan")
+    @Expose
+    private String namaKecamatan;
+    @SerializedName("kelurahan")
+    @Expose
+    private String kelurahan;
+
 
     public Integer getId() {
         return id;
@@ -249,6 +277,77 @@ public class Bangunan{
         this.longitude = longitude;
     }
 
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
+
+    public String getNoHp() {
+        return noHp;
+    }
+
+    public void setNoHp(String noHp) {
+        this.noHp = noHp;
+    }
+
+    public Object getNoKtp() {
+        return noKtp;
+    }
+
+    public void setNoKtp(Object noKtp) {
+        this.noKtp = noKtp;
+    }
+
+    public String getNamaWilayah() {
+        return namaWilayah;
+    }
+
+    public void setNamaWilayah(String namaWilayah) {
+        this.namaWilayah = namaWilayah;
+    }
+
+    public Integer getIdImb() {
+        return idImb;
+    }
+
+    public void setIdImb(Integer idImb) {
+        this.idImb = idImb;
+    }
+
+    public String getKetImb() {
+        return ketImb;
+    }
+
+    public void setKetImb(String ketImb) {
+        this.ketImb = ketImb;
+    }
+
+    public String getTipeLanduse() {
+        return tipeLanduse;
+    }
+
+    public void setTipeLanduse(String tipeLanduse) {
+        this.tipeLanduse = tipeLanduse;
+    }
+
+    public String getNamaKecamatan() {
+        return namaKecamatan;
+    }
+
+    public void setNamaKecamatan(String namaKecamatan) {
+        this.namaKecamatan = namaKecamatan;
+    }
+
+    public String getKelurahan() {
+        return kelurahan;
+    }
+
+    public void setKelurahan(String kelurahan) {
+        this.kelurahan = kelurahan;
+    }
 
     private Double distance;
 

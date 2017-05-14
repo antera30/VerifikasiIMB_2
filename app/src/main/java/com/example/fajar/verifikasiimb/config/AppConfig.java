@@ -5,17 +5,17 @@ package com.example.fajar.verifikasiimb.config;
  */
 public class AppConfig {
 
-//    //koneksi kontrakan dan kantor
-//    //BASE URL
-//    public static String BASE_API_URL = "http://192.168.100.9/tugas_akhir/android_api/";
-//
-//    // Server user login url
-//    public static String URL_LOGIN = "http://192.168.100.9/tugas_akhir/android_api/login.php";
-//
-//    // Server user register url
-//    public static String URL_REGISTER = "http://192.168.100.9/tugas_akhir/android_api/register.php";
-//
-//    public static String BASE_URL = "http://192.168.100.9";
+    //Koneksi VPS
+    //BASE URL
+    public static String BASE_API_URL = "http://128.199.73.147/tugas_akhir/android_api/";
+
+    // Server user login url
+    public static String URL_LOGIN = "http://128.199.73.147/tugas_akhir/android_api/login.php";
+
+    // Server user register url
+    public static String URL_REGISTER = "http://128.199.73.147/tugas_akhir/android_api/register.php";
+
+    public static String BASE_URL = "http://128.199.73.147";
 
 
 //    //koneksi kontrakan dan kantor
@@ -32,17 +32,17 @@ public class AppConfig {
 
 
 
-    //koneksi lab
-    //BASE URL
-    public static String BASE_API_URL = "http://10.122.1.125/tugas_akhir/android_api/";
-
-    // Server user login url
-    public static String URL_LOGIN = "http://10.122.1.125/tugas_akhir/android_api/login.php";
-
-    // Server user register url
-    public static String URL_REGISTER = "http://10.122.1.125/tugas_akhir/android_api/register.php";
-
-    public static String BASE_URL = "http://10.122.1.125";
+//    //koneksi lab
+//    //BASE URL
+//    public static String BASE_API_URL = "http://10.122.1.8/tugas_akhir/android_api/";
+//
+//    // Server user login url
+//    public static String URL_LOGIN = "http://10.122.1.8/tugas_akhir/android_api/login.php";
+//
+//    // Server user register url
+//    public static String URL_REGISTER = "http://10.122.1.8/tugas_akhir/android_api/register.php";
+//
+//    public static String BASE_URL = "http://10.122.1.8";
 
 
 //    //koneksi HP

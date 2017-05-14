@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.fajar.verifikasiimb.DetailBangunanActivity;
@@ -49,6 +50,9 @@ public class ItemFragment extends Fragment {
 
     private MapsFragment mapsFragment = new MapsFragment();
 
+    public ProgressBar progressBar;
+
+
     public ItemFragment() {
     }
 
@@ -78,13 +82,18 @@ public class ItemFragment extends Fragment {
             @Override
             public void onResponse(Call<BangunanResponse> call, retrofit2.Response<BangunanResponse> response) {
                 int statusCode = response.code();
-                List<Bangunan> bangunan = response.body().getBangunan(getActivity().getApplicationContext());
-                mapsFragment.setListBangunan(bangunan);
-                //Log.i("tugascontent", response.body().getBangunan().toString());
-                Log.i("tugascontent", response.body().toString());
-                Log.i("CodeTugas", String.valueOf(statusCode));
+                if (statusCode == 200) {
+                    List<Bangunan> bangunan = response.body().getBangunan(getActivity().getApplicationContext());
+                    mapsFragment.setListBangunan(bangunan);
+                    //Log.i("tugascontent", response.body().getBangunan().toString());
+                    Log.i("tugascontent", response.body().toString());
+                    Log.i("CodeTugas", String.valueOf(statusCode));
 //                Toast.makeText(getContext(),""+response, Toast.LENGTH_SHORT).show();
-                setBangunanAdapter(getView(), bangunan);
+                    setBangunanAdapter(getView(), bangunan);
+                } else {
+                    Toast.makeText(getContext(), "" + response+"failed to get response", Toast.LENGTH_SHORT).show();
+                }
+
             }
 
             @Override
@@ -100,10 +109,13 @@ public class ItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+
+//        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+
         return view;
     }
 
-    protected void setBangunanAdapter(View view, final List<Bangunan> bangunan){
+    protected void setBangunanAdapter(View view, final List<Bangunan> bangunan) {
         // Set the adapter
         if (view instanceof RecyclerView && bangunan != null) {
             final Context context = view.getContext();
@@ -118,24 +130,26 @@ public class ItemFragment extends Fragment {
             recyclerView.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(bangunan, mListener, context));
             recyclerView.addOnItemTouchListener(
-                    new RecyclerItemClickListener(context, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override public void onItemClick(View view, int position) {
-                             //do whatever
+                    new RecyclerItemClickListener(context, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            //do whatever
                             Bangunan bg = bangunan.get(position);
                             Intent i = new Intent(context, DetailBangunanActivity.class);
                             Bundle extras = new Bundle();
+                            extras.putInt("id", bg.getId());
                             extras.putInt("position", position);
                             extras.putInt("fid", bg.getFid());
                             extras.putInt("nib", bg.getNib());
                             extras.putInt("sk", bg.getNoSk());
                             extras.putInt("imb", bg.getIdKetImb());
+                            extras.putString("ket_imb", bg.getKetImb());
                             extras.putInt("persil", bg.getNoPersil());
-                            extras.putInt("pemilik", bg.getIdPemilik());
-                            extras.putInt("wilayah", bg.getIdWilayah());
-                            extras.putInt("alamat", bg.getIdAlamat());
-                            extras.putInt("landuse", bg.getIdLanduse());
-                            extras.putInt("kelurahan", bg.getIdKelurahan());
-                            extras.putInt("kecamatan", bg.getIdKecamatan());
+                            extras.putString("pemilik", bg.getNama());
+                            extras.putString("wilayah", bg.getNamaWilayah());
+                            extras.putString("landuse", bg.getTipeLanduse());
+                            extras.putString("kelurahan", bg.getKelurahan());
+                            extras.putString("kecamatan", bg.getNamaKecamatan());
                             extras.putString("namasite", bg.getNamaSite());
                             extras.putString("namajalan", bg.getNamaJalan());
                             extras.putString("gang", bg.getGang());
@@ -146,17 +160,17 @@ public class ItemFragment extends Fragment {
 
                             i.putExtras(extras);
                             startActivity(i);
+//                            getActivity().finish();
                         }
 
-                        @Override public void onLongItemClick(View view, int position) {
-                            Toast.makeText(context,"Item Telah Di Pencet", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+                            Toast.makeText(context, "Item Telah Di Pencet", Toast.LENGTH_SHORT).show();
                         }
                     })
             );
 
-        }
-
-        else {
+        } else {
             Toast.makeText(getActivity(), "the data is null", Toast.LENGTH_SHORT).show();
         }
 
@@ -194,7 +208,6 @@ public class ItemFragment extends Fragment {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Bangunan item);
     }
-
 
 
 }

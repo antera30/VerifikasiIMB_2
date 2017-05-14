@@ -3,6 +3,8 @@ package com.example.fajar.verifikasiimb.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -53,7 +55,16 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
         holder.mContentView.setText(mValues.get(position).getNamaJalan());
+
         gps = new GPSTracker(mContext);
+        int status = mValues.get(position).getIdKetImb();
+        if (status == 1){
+            holder.statusBangunan.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        } else if (status == 2){
+            holder.statusBangunan.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red));
+        } else {
+            holder.statusBangunan.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue));
+        }
         double latitude1, longitude1, latitude2, longitude2;
         if(gps.canGetLocation()){
             latitude1 = gps.getLatitude();
@@ -107,6 +118,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public final TextView mContentView;
         public final TextView mDistanceView;
         public final ImageView mGambarBangunan;
+        public final ImageView statusBangunan;
         public Bangunan mItem;
 
         public ViewHolder(View view) {
@@ -116,6 +128,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             mDistanceView = (TextView) view.findViewById(R.id.jarak);
             mContentView = (TextView) view.findViewById(R.id.alamat);
             mGambarBangunan = (ImageView) view.findViewById(R.id.gambar_bangunan);
+            statusBangunan = (ImageView) view.findViewById(R.id.iv_status);
         }
 
         @Override

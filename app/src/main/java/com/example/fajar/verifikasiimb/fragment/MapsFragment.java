@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.fajar.verifikasiimb.DetailBangunanActivity;
 import com.example.fajar.verifikasiimb.R;
 import com.example.fajar.verifikasiimb.VerificationActivity;
 import com.example.fajar.verifikasiimb.model.Bangunan;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.lang.reflect.Array;
@@ -54,7 +56,9 @@ public class MapsFragment extends Fragment {
     ImageButton btn_verification;
     public static List<Bangunan> listBangunan = new ArrayList<>();
     public boolean cameraFirstMove = false;
-
+    public double mylatitude, mylongitude;
+    private Marker myMarker, clickMarker;
+    private LatLng clickLatLng;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,16 +67,7 @@ public class MapsFragment extends Fragment {
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
-        btn_verification = (ImageButton) rootView.findViewById(R.id.insert_verification);
-        btn_verification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), VerificationActivity.class);
-                startActivity(intent);
-                //Toast.makeText(getActivity().getApplicationContext(), listBangunan.toString(), Toast.LENGTH_SHORT).show();
 
-            }
-        });
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -105,9 +100,11 @@ public class MapsFragment extends Fragment {
                         LatLng loc = new LatLng(bangunanList.get(i).getLatitude(), bangunanList.get(i).getLongitude());
                         int pemilik = bangunanList.get(i).getIdPemilik();
                         int ket_imb = bangunanList.get(i).getIdKetImb();
-                        addMarker(loc, mMap, "Id Pemilik : " + pemilik + " status imb : " +ket_imb, ket_imb);
+                        int id_bangunan = bangunanList.get(i).getId();
+                        addMarker(loc, mMap, "Id Pemilik : " + pemilik + " status imb : " + ket_imb, ket_imb, i);
                     }
                 }
+
 
                 googleMap.setMyLocationEnabled(true);
                 if (mMapView != null &&
@@ -122,6 +119,37 @@ public class MapsFragment extends Fragment {
                     locationButton.setLayoutParams(params);
                 }
 
+                mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+                        clickLatLng = latLng;
+                        if (clickMarker != null) {
+                            clickMarker.remove();
+                        }
+                        clickMarker = mMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(getString(R.string.laporkan_bang))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                        Toast.makeText(getContext(),getString(R.string.laporkan_bang)+"\n"+latLng, Toast.LENGTH_SHORT).show();
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 19.0f));
+
+                    }
+                });
+                btn_verification = (ImageButton) rootView.findViewById(R.id.insert_verification);
+                btn_verification.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), VerificationActivity.class);
+                        Bundle extras = new Bundle();
+                        extras.putInt("task_id", 100);
+                        extras.putDouble("latitude", clickLatLng.latitude);
+                        extras.putDouble("longitude", clickLatLng.longitude);
+                        intent.putExtras(extras);
+                        startActivity(intent);
+                        //Toast.makeText(getActivity().getApplicationContext(), listBangunan.toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
                 mMap.setOnMyLocationChangeListener(myLocationChangeListener);
 
             }
@@ -129,23 +157,60 @@ public class MapsFragment extends Fragment {
         return rootView;
     }
 
-    public void addMarker(LatLng latLng, GoogleMap googleMap, String title, int status) {
+    public void addMarker(LatLng latLng, GoogleMap googleMap, String title, int status, final int id_bangunan) {
         if (status == 1) {
-            googleMap.addMarker(new MarkerOptions().position(latLng).title(title)
+            myMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(String.valueOf(id_bangunan))
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         } else if (status == 2) {
-            googleMap.addMarker(new MarkerOptions().position(latLng).title(title)
+            myMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(String.valueOf(id_bangunan))
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         } else if (status == 3) {
-            googleMap.addMarker(new MarkerOptions().position(latLng).title(title)
+            myMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(String.valueOf(id_bangunan))
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
         }
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+//                Toast.makeText(getContext(), "" + marker.getSnippet(), Toast.LENGTH_SHORT).show();
+                if (marker.getSnippet() != null) {
+                    Intent i = new Intent(getContext(), DetailBangunanActivity.class);
+                    Bangunan bg = listBangunan.get(Integer.parseInt(marker.getSnippet()));
+                    Bundle extras = new Bundle();
+                    extras.putInt("id", bg.getId());
+                    extras.putInt("position", Integer.parseInt(marker.getSnippet()));
+                    extras.putInt("fid", bg.getFid());
+                    extras.putInt("nib", bg.getNib());
+                    extras.putInt("sk", bg.getNoSk());
+                    extras.putInt("imb", bg.getIdKetImb());
+                    extras.putString("ket_imb", bg.getKetImb());
+                    extras.putInt("persil", bg.getNoPersil());
+                    extras.putString("pemilik", bg.getNama());
+                    extras.putString("wilayah", bg.getNamaWilayah());
+                    extras.putString("landuse", bg.getTipeLanduse());
+                    extras.putString("kelurahan", bg.getKelurahan());
+                    extras.putString("kecamatan", bg.getNamaKecamatan());
+                    extras.putString("namasite", bg.getNamaSite());
+                    extras.putString("namajalan", bg.getNamaJalan());
+                    extras.putString("gang", bg.getGang());
+                    extras.putString("nomor", bg.getNomor());
+                    extras.putDouble("latitude", bg.getLatitude());
+                    extras.putDouble("longitude", bg.getLongitude());
+                    extras.putString("encoded_image", bg.getGambarBangunan());
+                    i.putExtras(extras);
+                    startActivity(i);
+                }
+                return false;
+            }
+
+        });
 
     }
 
     private GoogleMap.OnMyLocationChangeListener myLocationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
         @Override
         public void onMyLocationChange(Location location) {
+            mylatitude = location.getLatitude();
+            mylongitude = location.getLongitude();
             LatLng myLocation = new LatLng(location.getLatitude(), location.getLongitude());
             if (mMap != null && cameraFirstMove == false) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 16.0f));
@@ -190,4 +255,37 @@ public class MapsFragment extends Fragment {
     public void setListBangunan(List<Bangunan> bangunan) {
         listBangunan = bangunan;
     }
+
+//    @Override
+//    public boolean onMarkerClick(Marker marker) {
+//        if (marker.equals(myMarker))
+//        {
+////            Intent i = new Intent(getContext(), DetailBangunanActivity.class);
+////            Bundle extras = new Bundle();
+////            extras.putInt("id", bg.getId());
+////            extras.putInt("position", position);
+////            extras.putInt("fid", bg.getFid());
+////            extras.putInt("nib", bg.getNib());
+////            extras.putInt("sk", bg.getNoSk());
+////            extras.putInt("imb", bg.getIdKetImb());
+////            extras.putString("ket_imb", bg.getKetImb());
+////            extras.putInt("persil", bg.getNoPersil());
+////            extras.putString("pemilik", bg.getNama());
+////            extras.putString("wilayah", bg.getNamaWilayah());
+////            extras.putString("landuse", bg.getTipeLanduse());
+////            extras.putString("kelurahan", bg.getKelurahan());
+////            extras.putString("kecamatan", bg.getNamaKecamatan());
+////            extras.putString("namasite", bg.getNamaSite());
+////            extras.putString("namajalan", bg.getNamaJalan());
+////            extras.putString("gang", bg.getGang());
+////            extras.putString("nomor", bg.getNomor());
+////            extras.putDouble("latitude", bg.getLatitude());
+////            extras.putDouble("longitude", bg.getLongitude());
+////            extras.putString("encoded_image", bg.getGambarBangunan());
+////
+////            i.putExtras(extras);
+////
+////            startActivity(i);
+//        }
+//    }
 }

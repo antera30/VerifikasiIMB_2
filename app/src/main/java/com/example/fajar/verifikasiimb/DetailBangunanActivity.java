@@ -2,14 +2,9 @@ package com.example.fajar.verifikasiimb;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,33 +13,44 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.fajar.verifikasiimb.config.AppConfig;
 import com.example.fajar.verifikasiimb.model.Bangunan;
+import com.example.fajar.verifikasiimb.rest.ApiService;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DetailBangunanActivity extends AppCompatActivity {
     private Toolbar toolbar;
     Intent intent;
     int position, fid;
-    Button btn_verification;
+    Button btn_tdk_sesuai, btn_sesuai;
     ImageButton btn_single_maps_view;
     private List<Bangunan> mValues;
     String TAG = DetailBangunanActivity.class.getSimpleName();
+    ApiService service;
 
     TextView tv_fid, tv_nib, tv_no_sk, tv_no_persil, tv_nama_site, tv_pemilik, tv_wilayah,
             tv_alamat, tv_ket_imb, tv_landuse, tv_nama_jalan, tv_gang, tv_nomor, tv_kelurahan, tv_kecamatan;
+
+    int id_petugas, id_bangunan, id_ket_bangunan, imb;
 
     ImageView gambar_bangunan;
     private static final int MAX_WIDTH = 400;
     private static final int MAX_HEIGHT = 300;
     private Bitmap theBitmap = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,22 +59,23 @@ public class DetailBangunanActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("Detail Bangunan");
+        getSupportActionBar().setTitle("Data Berdasarkan IMB");
 
         intent = getIntent();
         Bundle extras = intent.getExtras();
         position = extras.getInt("position");
-        int fid = extras.getInt("fid");
+        id_bangunan = extras.getInt("id");
+        final int fid = extras.getInt("fid");
         int sk = extras.getInt("sk");
         int nib = extras.getInt("nib");
-        int imb = extras.getInt("imb");
+        imb = extras.getInt("imb");
+        String ket_imb = extras.getString("ket_imb");
         int persil = extras.getInt("persil");
-        int pemilik = extras.getInt("pemilik");
-        int wilayah = extras.getInt("wilayah");
-        int alamat = extras.getInt("alamat");
-        int landuse = extras.getInt("landuse");
-        int kelurahan = extras.getInt("kelurahan");
-        int kecamatan = extras.getInt("kecamatan");
+        String pemilik = extras.getString("pemilik");
+        String wilayah = extras.getString("wilayah");
+        String landuse = extras.getString("landuse");
+        String kelurahan = extras.getString("kelurahan");
+        String kecamatan = extras.getString("kecamatan");
         String namasite = extras.getString("namasite");
         String namajalan = extras.getString("namajalan");
         String gang = extras.getString("gang");
@@ -77,14 +84,40 @@ public class DetailBangunanActivity extends AppCompatActivity {
         final double longitude = extras.getDouble("longitude");
         final String encoded_image = extras.getString("encoded_image");
 
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .build();
+
+        service = new Retrofit.Builder().baseUrl(AppConfig.BASE_API_URL).addConverterFactory(GsonConverterFactory.create())
+                .client(client).build()
+                .create(ApiService.class);
+
+
         Toast.makeText(this, "" + fid, Toast.LENGTH_LONG).show();
 
-        btn_verification = (Button) findViewById(R.id.btn_verification);
-        btn_verification.setOnClickListener(new View.OnClickListener() {
+        btn_tdk_sesuai = (Button) findViewById(R.id.btn_bangunan_tdk_sesuai);
+        btn_tdk_sesuai.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DetailBangunanActivity.this, VerificationActivity.class);
+                Bundle extras = new Bundle();
+                extras.putInt("task_id", 200);
+                extras.putInt("bangunan_id", fid);
+                intent.putExtras(extras);
                 startActivity(intent);
+            }
+        });
+
+
+        btn_sesuai = (Button) findViewById(R.id.btn_bangunan_sesuai);
+        btn_sesuai.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                id_petugas = 1;
+//                Toast.makeText(getApplicationContext(), ""+String.valueOf(id_petugas)+", "+String.valueOf(id_bangunan)+", "+String.valueOf(imb), Toast.LENGTH_SHORT).show();
+                uploaddata(String.valueOf(id_petugas), String.valueOf(id_bangunan), String.valueOf(imb));
             }
         });
 
@@ -100,15 +133,15 @@ public class DetailBangunanActivity extends AppCompatActivity {
         tv_nama_site = (TextView) findViewById(R.id.bangunan_nama_site);
         tv_nama_site.setText(namasite);
         tv_pemilik = (TextView) findViewById(R.id.bangunan_pemilik);
-        tv_pemilik.setText(String.valueOf(pemilik));
+        tv_pemilik.setText(pemilik);
         tv_wilayah = (TextView) findViewById(R.id.bangunan_wilayah);
-        tv_wilayah.setText(String.valueOf(wilayah));
-        tv_alamat = (TextView) findViewById(R.id.bangunan_alamat);
-        tv_alamat.setText(String.valueOf(alamat));
+        tv_wilayah.setText(wilayah);
+//        tv_alamat = (TextView) findViewById(R.id.bangunan_alamat);
+//        tv_alamat.setText(String.valueOf(alamat));
         tv_ket_imb = (TextView) findViewById(R.id.bangunan_ket_imb);
-        tv_ket_imb.setText(String.valueOf(imb));
+        tv_ket_imb.setText(ket_imb);
         tv_landuse = (TextView) findViewById(R.id.bangunan_landuse);
-        tv_landuse.setText(String.valueOf(landuse));
+        tv_landuse.setText(landuse);
         tv_nama_jalan = (TextView) findViewById(R.id.bangunan_nama_jalan);
         tv_nama_jalan.setText(namajalan);
         tv_gang = (TextView) findViewById(R.id.bangunan_gang);
@@ -116,48 +149,25 @@ public class DetailBangunanActivity extends AppCompatActivity {
         tv_nomor = (TextView) findViewById(R.id.bangunan_nomor);
         tv_nomor.setText(nomor);
         tv_kelurahan = (TextView) findViewById(R.id.bangunan_kelurahan);
-        tv_kelurahan.setText(String.valueOf(kelurahan));
+        tv_kelurahan.setText(kelurahan);
         tv_kecamatan = (TextView) findViewById(R.id.bangunan_kecamatan);
-        tv_kecamatan.setText(String.valueOf(kecamatan));
-
+        tv_kecamatan.setText(kecamatan);
         gambar_bangunan = (ImageView) findViewById(R.id.imagerumah);
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Looper.prepare();
-                try {
-                    String encodedImage = ""+ AppConfig.BASE_URL+encoded_image;
-                    theBitmap = Glide.
-                            with(DetailBangunanActivity.this).
-                            load(encodedImage).
-                            asBitmap().
-                            into(-1,-1).
-                            get();
-                } catch (final ExecutionException e) {
-                    Log.e(TAG, e.getMessage());
-                } catch (final InterruptedException e) {
-                    Log.e(TAG, e.getMessage());
-                }
-                return null;
-            }
-            @Override
-            protected void onPostExecute(Void dummy) {
-                if (null != theBitmap) {
-                    // The full bitmap should be available here
-                    gambar_bangunan.setImageBitmap(theBitmap);
-                    Log.d(TAG, "Image loaded");
-                };
-            }
-        }.execute();
 
+        if (encoded_image != null) {
+            String encodedImage = "" + AppConfig.BASE_URL + encoded_image;
+            Picasso.with(getApplicationContext())
+                    .load(encodedImage)
+                    .resize(MAX_WIDTH, MAX_HEIGHT)
+                    .centerCrop()
+                    .into(gambar_bangunan);
+        }
         gambar_bangunan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-        //byte[] decodedString = Base64.decode(encoded_image, Base64.DEFAULT);
-
 
         //button that inflate to single maps view activity
         btn_single_maps_view = (ImageButton) findViewById(R.id.btn_single_maps_view);
@@ -166,7 +176,7 @@ public class DetailBangunanActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), SingleBangunanMapsView.class);
                 Bundle extras = new Bundle();
-                extras.putDouble("latitude",latitude);
+                extras.putDouble("latitude", latitude);
                 extras.putDouble("longitude", longitude);
                 i.putExtras(extras);
                 startActivity(i);
@@ -175,15 +185,22 @@ public class DetailBangunanActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+//        Intent intent = new Intent(DetailBangunanActivity.this, MainActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+        finish();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // todo: goto back activity from here
-                Intent intent = new Intent(DetailBangunanActivity.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+//                Intent intent = new Intent(DetailBangunanActivity.this, MainActivity.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
                 finish();
                 return true;
 
@@ -191,4 +208,33 @@ public class DetailBangunanActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public void uploaddata(String _id_petugas, String _id_bangunan, String _id_ket_imb) {
+        RequestBody id_petugas = RequestBody.create(MediaType.parse("text/plain"), _id_petugas);
+        RequestBody id_bangunan = RequestBody.create(MediaType.parse("text/plain"), _id_bangunan);
+        RequestBody id_ket_bangunan = RequestBody.create(MediaType.parse("text/plain"), _id_ket_imb);
+        Call<ResponseBody> call = service.postlaporansesuai(id_ket_bangunan, id_bangunan, id_petugas);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), R.string.response_success_upload, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(DetailBangunanActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    DetailBangunanActivity.this.finish();
+                } else {
+                    response.message().toString();
+//                    response.body().getClass();
+                    Toast.makeText(getApplicationContext(), response.message().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), R.string.response_failure, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

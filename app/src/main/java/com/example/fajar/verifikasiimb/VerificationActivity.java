@@ -68,6 +68,8 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
     private Toolbar toolbar;
     public ImageView iv_photo_1, iv_photo_2, iv_photo_3;
 
+    private static int TASK_ID_FROM_BANGUNAN = 200;
+
     // LogCat tag
     private static final String TAG = VerificationActivity.class.getSimpleName();
 
@@ -83,6 +85,8 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
     public Context mContext;
     public static String ImageCompressedPath;
     ArrayList<String> capturedImagePath = new ArrayList<String>();
+    public double latitude_bang, longitude_bang;
+    public int task_id, bangunan_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +94,16 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
         utils = new ImageLoadingUtils(this);
         setContentView(R.layout.activity_verification);
         mContext = getApplicationContext();
+
+        Intent i = getIntent();
+        Bundle extras = i.getExtras();
+        task_id = extras.getInt("task_id");
+        if (task_id == TASK_ID_FROM_BANGUNAN) {
+            bangunan_id = extras.getInt("bangunan_id");
+        } else {
+            latitude_bang = extras.getDouble("latitude");
+            longitude_bang = extras.getDouble("longitude");
+        }
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -145,9 +159,9 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
 
                 if (!TextUtils.isEmpty(nama_jalan) && !TextUtils.isEmpty(keterangan)
                         && !TextUtils.isEmpty(String.valueOf(nomor_rumah))) {
-                    Toast.makeText(mContext, "position : " + String.valueOf(status) + " nomor : " + nomor_rumah +
-                            " nama jalan : " + nama_jalan + " keterangan : " + keterangan, Toast.LENGTH_LONG).show();
-                    uploadFile(ImageCompressedPath, String.valueOf(status), nomor_rumah, nama_jalan, keterangan);
+//                    Toast.makeText(mContext, "position : " + String.valueOf(status) + " nomor : " + nomor_rumah +
+//                            " nama jalan : " + nama_jalan + " keterangan : " + keterangan, Toast.LENGTH_LONG).show();
+                    uploadFile(String.valueOf(status), nomor_rumah, nama_jalan, keterangan);
                 }
 
             }
@@ -248,7 +262,7 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         status = position;
-        Toast.makeText(getApplicationContext(), "position : " + status, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "position : " + status, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -258,31 +272,213 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
 
     public ProgressDialog progressDialog;
 
-    private void uploadFile(String filePath, String kondisi_bangunan, String no_rumah, String nama_jalan, String keterangan) {
+    private void uploadFile(String kondisi_bangunan, String no_rumah, String nama_jalan, String keterangan) {
         // String filePath = getRealPathFromUri(fileUri);
 
         progressDialog = new ProgressDialog(VerificationActivity.this);
         progressDialog.setMessage("uploading data ...");
         progressDialog.setTitle("Upload data to Server");
         progressDialog.setCancelable(true);
-//        progressDialog.show();
+        progressDialog.show();
 
-        if (filePath != null && !filePath.isEmpty()) {
-            File file = new File(filePath);
+        RequestBody konbang = RequestBody.create(MediaType.parse("text/plain"), kondisi_bangunan);
+        RequestBody norum = RequestBody.create(MediaType.parse("text/plain"), no_rumah);
+        RequestBody namjal = RequestBody.create(MediaType.parse("text/plain"), nama_jalan);
+        RequestBody keter = RequestBody.create(MediaType.parse("text/plain"), keterangan);
+
+
+        if (capturedImagePath.size() == 1 && task_id == TASK_ID_FROM_BANGUNAN) {
+            RequestBody id_bangunan = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(bangunan_id));
+            File file = new File(capturedImagePath.get(0));
             if (file.exists()) {
-
                 // create RequestBody instance from file
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
                 MultipartBody.Part body =
                         MultipartBody.Part.createFormData("image", file.getName(), requestFile);
-                RequestBody konbang = RequestBody.create(MediaType.parse("text/plain"), kondisi_bangunan);
-                RequestBody norum = RequestBody.create(MediaType.parse("text/plain"), no_rumah);
-                RequestBody namjal = RequestBody.create(MediaType.parse("text/plain"), nama_jalan);
-                RequestBody keter = RequestBody.create(MediaType.parse("text/plain"), keterangan);
+                // executes the request
+                Call<ResponseBody> call = service.postImage(body, konbang, norum, namjal, keter, id_bangunan);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call,
+                                           Response<ResponseBody> response) {
+                        progressDialog.dismiss();
+                        if (response.code() == 200) {
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(i);
+                            Toast.makeText(getApplicationContext(), "Success Upload Data", Toast.LENGTH_LONG).show();
+                            finish();
+                            Log.i(TAG, "success" + response.message().toString());
+                            Log.i(TAG, "success" + response.body().toString());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Failed to upload, please check your connection", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+        } else if (capturedImagePath.size() == 2 && task_id == TASK_ID_FROM_BANGUNAN) {
+            RequestBody id_bangunan = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(bangunan_id));
+            File file_1 = new File(capturedImagePath.get(0));
+            File file_2 = new File(capturedImagePath.get(1));
+            if (file_1.exists() && file_2.exists()) {
+                // create RequestBody instance from file
+                RequestBody requestFile_1 = RequestBody.create(MediaType.parse("multipart/form-data"), file_1);
+                MultipartBody.Part body_1 =
+                        MultipartBody.Part.createFormData("image", file_1.getName(), requestFile_1);
+
+                RequestBody requestFile_2 = RequestBody.create(MediaType.parse("multipart/form-data"), file_2);
+                MultipartBody.Part body_2 =
+                        MultipartBody.Part.createFormData("image_2", file_2.getName(), requestFile_2);
 
                 // executes the request
-                Call<ResponseBody> call = service.postImage(body, konbang, norum, namjal, keter);
+                Call<ResponseBody> call = service.postImage(body_1, body_2, konbang, norum, namjal, keter, id_bangunan);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call,
+                                           Response<ResponseBody> response) {
+                        progressDialog.dismiss();
+                        Log.i(TAG, "success" + response.body().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+        } else if (capturedImagePath.size() == 3 && task_id == TASK_ID_FROM_BANGUNAN) {
+            RequestBody id_bangunan = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(bangunan_id));
+            File file_1 = new File(capturedImagePath.get(0));
+            File file_2 = new File(capturedImagePath.get(1));
+            File file_3 = new File(capturedImagePath.get(2));
+            if (file_1.exists() && file_2.exists() && file_3.exists()) {
+                // create RequestBody instance from file
+                RequestBody requestFile_1 = RequestBody.create(MediaType.parse("multipart/form-data"), file_1);
+                MultipartBody.Part body_1 =
+                        MultipartBody.Part.createFormData("image", file_1.getName(), requestFile_1);
+
+                RequestBody requestFile_2 = RequestBody.create(MediaType.parse("multipart/form-data"), file_2);
+                MultipartBody.Part body_2 =
+                        MultipartBody.Part.createFormData("image_2", file_2.getName(), requestFile_2);
+
+                RequestBody requestFile_3 = RequestBody.create(MediaType.parse("multipart/form-data"), file_3);
+                MultipartBody.Part body_3 =
+                        MultipartBody.Part.createFormData("image_3", file_3.getName(), requestFile_3);
+
+                // executes the request
+                Call<ResponseBody> call = service.postImage(body_1, body_2, body_3, konbang, norum, namjal, keter, id_bangunan);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call,
+                                           Response<ResponseBody> response) {
+                        progressDialog.dismiss();
+                        Log.i(TAG, "success" + response.body().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+        } else if (capturedImagePath.size() == 1 && task_id != TASK_ID_FROM_BANGUNAN) {
+            RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(latitude_bang));
+            RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(longitude_bang));
+            File file = new File(capturedImagePath.get(0));
+            if (file.exists()) {
+                // create RequestBody instance from file
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                MultipartBody.Part body =
+                        MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+                // executes the request
+                Call<ResponseBody> call = service.postImage(body, konbang, norum, namjal, keter, latitude, longitude);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call,
+                                           Response<ResponseBody> response) {
+                        progressDialog.dismiss();
+                        if (response.code() == 200) {
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(i);
+                            Toast.makeText(getApplicationContext(), "Success Upload Data", Toast.LENGTH_LONG).show();
+                            finish();
+                            Log.i(TAG, "success" + response.message().toString());
+                            Log.i(TAG, "success" + response.body().toString());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Failed to upload, please check your connection", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+        } else if (capturedImagePath.size() == 2 && task_id != TASK_ID_FROM_BANGUNAN) {
+            RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(latitude_bang));
+            RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(longitude_bang));
+            File file_1 = new File(capturedImagePath.get(0));
+            File file_2 = new File(capturedImagePath.get(1));
+            if (file_1.exists() && file_2.exists()) {
+                // create RequestBody instance from file
+                RequestBody requestFile_1 = RequestBody.create(MediaType.parse("multipart/form-data"), file_1);
+                MultipartBody.Part body_1 =
+                        MultipartBody.Part.createFormData("image", file_1.getName(), requestFile_1);
+
+                RequestBody requestFile_2 = RequestBody.create(MediaType.parse("multipart/form-data"), file_2);
+                MultipartBody.Part body_2 =
+                        MultipartBody.Part.createFormData("image_2", file_2.getName(), requestFile_2);
+
+                // executes the request
+                Call<ResponseBody> call = service.postImage(body_1, body_2, konbang, norum, namjal, keter, latitude, longitude);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call,
+                                           Response<ResponseBody> response) {
+                        progressDialog.dismiss();
+                        Log.i(TAG, "success" + response.body().toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                        progressDialog.dismiss();
+                    }
+                });
+            }
+        } else if (capturedImagePath.size() == 3 && task_id != TASK_ID_FROM_BANGUNAN) {
+            RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(latitude_bang));
+            RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(longitude_bang));
+            File file_1 = new File(capturedImagePath.get(0));
+            File file_2 = new File(capturedImagePath.get(1));
+            File file_3 = new File(capturedImagePath.get(2));
+            if (file_1.exists() && file_2.exists() && file_3.exists()) {
+                // create RequestBody instance from file
+                RequestBody requestFile_1 = RequestBody.create(MediaType.parse("multipart/form-data"), file_1);
+                MultipartBody.Part body_1 =
+                        MultipartBody.Part.createFormData("image", file_1.getName(), requestFile_1);
+
+                RequestBody requestFile_2 = RequestBody.create(MediaType.parse("multipart/form-data"), file_2);
+                MultipartBody.Part body_2 =
+                        MultipartBody.Part.createFormData("image_2", file_2.getName(), requestFile_2);
+
+                RequestBody requestFile_3 = RequestBody.create(MediaType.parse("multipart/form-data"), file_3);
+                MultipartBody.Part body_3 =
+                        MultipartBody.Part.createFormData("image_3", file_3.getName(), requestFile_3);
+
+                // executes the request
+                Call<ResponseBody> call = service.postImage(body_1, body_2, body_3, konbang, norum, namjal, keter, latitude, longitude);
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call,
@@ -299,6 +495,8 @@ public class VerificationActivity extends AppCompatActivity implements AdapterVi
                 });
             }
         }
+
+
     }
 
     public Uri getOutputMediaFileUri(int type) {
